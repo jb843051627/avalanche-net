@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>avalanche-net 监测控制台</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>avalanche-net</h1>
+  <span id="overview"></span>
+</header>
+<main>
+  <section id="stations">
+    <h2>监测站</h2>
+    <table id="station-table">
+      <thead><tr><th>ID</th><th>名称</th><th>区域</th><th>海拔</th><th>坡向</th><th>状态</th><th>最近心跳</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+  <section id="alerts">
+    <h2>活跃告警</h2>
+    <table id="alert-table">
+      <thead><tr><th>站点</th><th>规则</th><th>级别</th><th>原因</th><th>触发时间(UTC)</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+  <section id="bulletins">
+    <h2>最新公报</h2>
+    <table id="bulletin-table">
+      <thead><tr><th>区域</th><th>发布日</th><th>林线上方</th><th>林线附近</th><th>林线下方</th><th>阶段</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+</main>
+<script src="/static/app.js"></script>
+</body>
+</html>
