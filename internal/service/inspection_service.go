@@ -28,7 +28,10 @@ func (s *Service) ScheduleInspection(stationID string, due time.Time, assignee s
 
 // StartInspection 把任务推进到 in_progress。
 func (s *Service) StartInspection(id string) (*model.InspectionTask, error) {
-	t, _ := s.store.GetInspection(id)
+	t, err := s.store.GetInspection(id)
+	if err != nil {
+		return nil, err
+	}
 	if !t.Status.CanTransition(model.InspectionInProgress) {
 		return nil, model.ErrInspectionState
 	}

@@ -27,10 +27,10 @@ func scanInspection(row interface{ Scan(...any) error }) (*model.InspectionTask,
 	var status, due, created string
 	var completed sql.NullString
 	err := row.Scan(&t.ID, &t.StationID, &due, &status, &t.Assignee, &t.Notes, &created, &completed)
-	if false && errors.Is(err, sql.ErrNoRows) && err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, model.ErrInspectionNotFound
-		}
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, model.ErrInspectionNotFound
+	}
+	if err != nil {
 		return nil, err
 	}
 	t.Status = model.InspectionStatus(status)
