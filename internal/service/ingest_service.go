@@ -69,8 +69,12 @@ func (s *Service) IngestBatch(ctx context.Context, b *model.ReadingBatch) (int, 
 }
 
 // LatestReadings 返回站点缓存中的最新读数快照。
+// 防御性拷贝：service 出口再隔离一层，避免外部改动穿透进缓存。
 func (s *Service) LatestReadings(stationID string) []model.Reading {
-	return s.cache.Get(stationID)
+	src := s.cache.Get(stationID)
+	out := make([]model.Reading, len(src))
+	copy(out, src)
+	return out
 }
 
 // BatchFingerprint 计算批次的指纹串（校验和签名输入）。

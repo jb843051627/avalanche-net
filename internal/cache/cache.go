@@ -56,7 +56,10 @@ func (c *ReadingCache) Get(stationID string) []model.Reading {
 	if e == nil {
 		return nil
 	}
-	return e.readings
+	// 防御性拷贝：返回独立副本，避免外部改动穿透回缓存底层数组。
+	out := make([]model.Reading, len(e.readings))
+	copy(out, e.readings)
+	return out
 }
 
 // LatestByKind 返回站点指定传感器最新一条读数。
