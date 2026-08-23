@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"log"
+	"sync"
 	"time"
 
 	"github.com/jb843051627/avalanche-net/internal/model"
@@ -18,9 +19,19 @@ func (s *Service) StartHeartbeatWatcher(ctx context.Context) func() {
 	}
 	ticker := time.NewTicker(interval)
 	done := make(chan struct{})
-	go s.heartbeatLoop(ctx, ticker, done)
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		s.heartbeatLoop(ctx, ticker, done)
+	}()
+	var once sync.Once
 	return func() {
-		close(done)
+		once.Do(func() {
+			ticker.Stop()
+			close(done)
+			wg.Wait()
+		})
 	}
 }
 
