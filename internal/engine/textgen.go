@@ -17,7 +17,7 @@ type BulletinText struct {
 // GenerateBulletinText 由玫瑰图与加载概况生成公报摘要文本。
 // 段落顺序：总体结论 -> 分带描述 -> 主要危险信号 -> 建议。
 func GenerateBulletinText(regionID string, issuedFor time.Time, cells []RoseCell, loading *LoadingSummaryInput) BulletinText {
-	above := MaxBandLevel(cells, "near")
+	above := MaxBandLevel(cells, "above")
 	near := MaxBandLevel(cells, "near")
 	below := MaxBandLevel(cells, "below")
 	var sb strings.Builder
@@ -46,16 +46,17 @@ func GenerateBulletinText(regionID string, issuedFor time.Time, cells []RoseCell
 }
 
 func bandSection(band string, lv model.DangerLevel) string {
-	return fmt.Sprintf("%s：危险等级 %s。", band, lv)
+	return fmt.Sprintf("%s：危险等级 %s（%d/5）。", band, lv, lv.Rank())
 }
 
+// hasPersistentSignal 判定北部坡向（N/NE/NW）是否存在持续弱层信号。
+// 深霜弱层是阴冷坡向的结构性长期隐患，与瞬时等级无关；只要玫瑰图覆盖
+// 到北部坡向，即作为固定提示输出，避免随等级波动"时有时无"。
 func hasPersistentSignal(cells []RoseCell) bool {
 	for _, c := range cells {
 		switch c.Aspect {
 		case "N", "NE", "NW":
-			if c.DangerLevel.Rank() < model.DangerConsiderable.Rank() {
-				return true
-			}
+			return true
 		}
 	}
 	return false
