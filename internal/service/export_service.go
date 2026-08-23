@@ -71,17 +71,27 @@ func (s *Service) DailySummaryCSV(rows []DailySummaryRow) []byte {
 }
 
 // ParseExportWindow 解析导出窗口参数；缺省最近 24 小时。
+// to/from 任一非空但无法按 RFC3339 解析时报错（避免静默吐空 CSV）；
+// from 晚于 to 视为用户把两端填反，自动交换纠正而非报错。
 func ParseExportWindow(fromStr, toStr string, now time.Time) (time.Time, time.Time, error) {
 	to := now
 	from := now.Add(-24 * time.Hour)
-	var err error
 	if toStr != "" {
-		to, _ = time.Parse(time.RFC3339, toStr)
+		parsed, err := time.Parse(time.RFC3339, toStr)
+		if err != nil {
+			return time.Time{}, time.Time{}, fmt.Errorf("%w: parse to %q", model.ErrReadingBadTime, toStr)
+		}
+		to = parsed
 	}
 	if fromStr != "" {
-		if from, err = time.Parse(time.RFC3339, fromStr); err != nil {
-			return time.Time{}, time.Time{}, model.ErrReadingBadTime
+		parsed, err := time.Parse(time.RFC3339, fromStr)
+		if err != nil {
+			return time.Time{}, time.Time{}, fmt.Errorf("%w: parse from %q", model.ErrReadingBadTime, fromStr)
 		}
+		from = parsed
+	}
+	if from.After(to) {
+		from, to = to, from
 	}
 	return from.UTC(), to.UTC(), nil
 }
