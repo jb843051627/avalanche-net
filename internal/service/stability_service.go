@@ -14,6 +14,9 @@ func (s *Service) ProfileFreshness() time.Duration { return 72 * time.Hour }
 // RunEvaluation 对站点执行一次稳定性评估：
 // 加载最近剖面与区域气象样本 -> 引擎评分 -> 风载合成 -> 持久化 -> 按需触发告警。
 func (s *Service) RunEvaluation(ctx context.Context, stationID string) (*model.StabilityEvaluation, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	st, err := s.store.GetStation(stationID)
 	if err != nil {
 		return nil, err
@@ -55,6 +58,9 @@ func (s *Service) RunEvaluation(ctx context.Context, stationID string) (*model.S
 	if hasWeak {
 		ev.WeakLayerIdx = weak.Index
 		ev.WeakLayerDepthCm = weak.DepthCm
+	}
+	if err := ctx.Err(); err != nil {
+		return nil, err
 	}
 	if err := s.store.InsertEvaluation(ev); err != nil {
 		return nil, err
