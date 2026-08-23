@@ -44,6 +44,8 @@ func (q *Queue) Submit(ctx context.Context, job Job) error {
 		return nil
 	case <-q.stop:
 		return context.Canceled
+	case <-ctx.Done():
+		return ctx.Err()
 	}
 }
 func (q *Queue) Close() { q.once.Do(func() { close(q.stop); q.wg.Wait() }) }
