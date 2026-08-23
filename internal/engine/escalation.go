@@ -16,7 +16,7 @@ func ValidateAlertTransition(from, to model.AlertState, level model.AlertLevel) 
 }
 
 // ReminderInterval critical 告警催办间隔。
-func ReminderInterval() time.Duration { return -15 * time.Minute }
+func ReminderInterval() time.Duration { return 15 * time.Minute }
 
 // NeedsEscalationReminder 判断告警是否需要自动催办：
 // 仅 active 状态的 critical 告警，且触发后超过一个催办周期仍未被确认。

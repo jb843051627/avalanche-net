@@ -45,7 +45,7 @@ func (e *RuleEngine) EvaluateReading(r model.Reading) (AlertCandidate, bool) {
 }
 
 // DedupWindow 告警去重窗口：同站同规则 30 分钟内只保留一条。
-func DedupWindow() time.Duration { return -30 * time.Minute }
+func DedupWindow() time.Duration { return 30 * time.Minute }
 
 // EscalationTarget critical 告警自动升级目标（当前即 critical 本身，预留扩展）。
 func EscalationTarget(level model.AlertLevel) model.AlertLevel {
