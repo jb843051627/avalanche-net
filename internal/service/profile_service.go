@@ -24,7 +24,9 @@ func (s *Service) CreateProfile(p *model.SnowProfile) error {
 		total += l.ThicknessCm()
 	}
 	p.TotalCm = total
-	_ = s.store.InsertProfile(p)
+	if err := s.store.InsertProfile(p); err != nil {
+		return err
+	}
 	s.met.Inc("profile.created")
 	return nil
 }

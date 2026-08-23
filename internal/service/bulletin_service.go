@@ -12,7 +12,9 @@ func (s *Service) DraftBulletin(b *model.Bulletin) error {
 	}
 	b.Stage = model.BulletinDraft
 	b.CreatedAt = s.clk.Now().UTC()
-	_ = s.store.InsertBulletin(b)
+	if err := s.store.InsertBulletin(b); err != nil {
+		return err
+	}
 	s.met.Inc("bulletin.drafted")
 	return nil
 }
