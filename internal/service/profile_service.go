@@ -17,6 +17,8 @@ func (s *Service) CreateProfile(p *model.SnowProfile) error {
 	if _, err := s.store.GetStation(p.StationID); err != nil {
 		return err
 	}
+	// 校验通过后再归一化：仅规整已合法的层数据，绝不在校验前静默重排乱序输入。
+	p.Layers = NormalizeLayers(p.Layers)
 	p.ObservedAt = p.ObservedAt.UTC()
 	var total float64
 	for _, l := range p.Layers {
@@ -46,12 +48,17 @@ func (s *Service) ProfileHistoryCount(stationID string) (int, error) {
 }
 
 // NormalizeLayers 按深度排序并重排 index（观测员录入顺序可能乱）。
+// 返回独立切片，绝不改动调用方传入的原始切片。
 func NormalizeLayers(layers []model.SnowLayer) []model.SnowLayer {
-	out := layers
+	out := make([]model.SnowLayer, len(layers))
+	copy(out, layers)
 	for i := 1; i < len(out); i++ {
 		for j := i; j > 0 && out[j].DepthFromCm < out[j-1].DepthFromCm; j-- {
 			out[j], out[j-1] = out[j-1], out[j]
 		}
+	}
+	for i := range out {
+		out[i].Index = i + 1
 	}
 	return out
 }

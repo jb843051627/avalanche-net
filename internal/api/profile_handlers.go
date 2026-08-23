@@ -13,28 +13,13 @@ func (h *Handler) createProfile(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, model.ErrNoLayers)
 		return
 	}
-	p.Layers = normalizeProfileLayers(p.Layers)
+	// 不在校验前静默重排：乱序/重叠/间隙的层数据应由 Validate 拒绝，
+	// 归一化由 CreateProfile 在校验通过后统一完成。
 	if err := h.svc.CreateProfile(&p); err != nil {
 		writeErr(w, err)
 		return
 	}
 	writeJSON(w, http.StatusCreated, p)
-}
-
-// normalizeProfileLayers 保证 index 连续且按深度升序。
-func normalizeProfileLayers(layers []model.SnowLayer) []model.SnowLayer {
-	if len(layers) < 2 {
-		return layers
-	}
-	for i := 1; i < len(layers); i++ {
-		for j := i; j > 0 && layers[j].DepthFromCm < layers[j-1].DepthFromCm; j-- {
-			layers[j], layers[j-1] = layers[j-1], layers[j]
-		}
-	}
-	for i := range layers {
-		layers[i].Index = i + 1
-	}
-	return layers
 }
 
 func (h *Handler) getProfile(w http.ResponseWriter, r *http.Request) {
