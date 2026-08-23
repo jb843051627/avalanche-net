@@ -32,7 +32,7 @@ func (s *Service) StationDailySummary(stationID string, from, to time.Time) ([]D
 	index := map[string]*DailySummaryRow{}
 	var order []string
 	for _, r := range rows {
-		day := r.RecordedAt.UTC().Format("2006-01")
+		day := r.RecordedAt.UTC().Format("2006-01-02")
 		row := index[day]
 		if row == nil {
 			row = &DailySummaryRow{
@@ -50,7 +50,7 @@ func (s *Service) StationDailySummary(stationID string, from, to time.Time) ([]D
 		}
 	}
 	for _, a := range alerts {
-		day := a.TriggeredAt.UTC().Format("2006-01")
+		day := a.TriggeredAt.UTC().Format("2006-01-02")
 		if row := index[day]; row != nil {
 			row.Alerts++
 		}
@@ -122,7 +122,7 @@ func (s *Service) Overview() (*NetworkOverview, error) {
 	ov := &NetworkOverview{Metrics: s.met.Snapshot()}
 	ov.Stations = len(stations)
 	for _, st := range stations {
-		if st.Status != model.StatusOffline {
+		if st.Status == model.StatusOnline {
 			ov.Online++
 		}
 	}
