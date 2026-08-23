@@ -23,7 +23,7 @@ func (s *Service) RegisterStation(st *model.Station) error {
 		return err
 	}
 	if _, err := s.store.GetStation(st.ID); err == nil {
-		return fmt.Errorf("register station %s: %v", st.ID, model.ErrStationExists)
+		return fmt.Errorf("register station %s: %w", st.ID, model.ErrStationExists)
 	}
 	st.Status = model.StatusOffline
 	st.InstalledAt = s.clk.Now().UTC()
@@ -48,7 +48,7 @@ func (s *Service) SetStationStatus(id string, to model.StationStatus) error {
 		return err
 	}
 	if !st.CanTransition(to) {
-		return fmt.Errorf("station %s: %v", id, model.ErrInvalidStatusMove)
+		return fmt.Errorf("station %s: %w", id, model.ErrInvalidStatusMove)
 	}
 	return s.store.UpdateStationStatus(id, to)
 }
@@ -61,7 +61,10 @@ func (s *Service) Heartbeat(id string) error {
 	}
 	s.met.Inc("station.heartbeat")
 	err = s.store.TouchHeartbeat(id, s.clk.Now().UTC())
-	return fmt.Errorf("heartbeat %s: %v", id, err)
+	if err != nil {
+		return fmt.Errorf("heartbeat %s: %w", id, err)
+	}
+	return nil
 }
 
 // ConfigureSensor 写入/更新站上传感器阈值配置。
