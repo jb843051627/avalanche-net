@@ -1,0 +1,16 @@
+body { font-family: "Segoe UI", "Microsoft YaHei", sans-serif; margin: 0; background: #f4f7fa; color: #1d2b36; }
+header { background: #12395c; color: #fff; padding: 12px 24px; display: flex; align-items: baseline; gap: 16px; }
+header h1 { margin: 0; font-size: 20px; }
+main { padding: 24px; display: grid; gap: 24px; max-width: 1100px; margin: 0 auto; }
+section { background: #fff; border-radius: 8px; padding: 16px 20px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+h2 { margin-top: 0; font-size: 16px; color: #12395c; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid #e3eaf0; }
+th { background: #eef3f7; }
+.badge { padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+.online  { background: #d9f2e0; color: #17663a; }
+.offline { background: #f6ddd8; color: #8a2c1d; }
+.maintenance { background: #fdf3d7; color: #7a5b13; }
+.critical { background: #f6ddd8; color: #8a2c1d; font-weight: 600; }
+.warn { background: #fdf3d7; color: #7a5b13; }
+.info { background: #e2edf7; color: #23517c; }

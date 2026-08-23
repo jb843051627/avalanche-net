@@ -1,0 +1,21 @@
+# build artifacts & runtime data
+/data/
+*.db
+*.db-shm
+*.db-wal
+# 出题侧产物（严禁入库）
+*_fields.json
+*_calibrate_config.json
+calibration_report.md
+cases/
+_docker/
+fix_check_report.md
+selfcheck_create_report.md
+scale_gate_report.md
+uq_similarity_report.md
+task_type-report.md
+stage8_checklist.md
+bugs_metadata.json
+metadata/
+__pycache__/
+*.py
